@@ -1,72 +1,133 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useRef } from 'react';
+import { toPng } from 'html-to-image';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import EvidenceCard from '@/components/EvidenceCard';
 
-const AdvocacyReportPage = () => {
-  const [formData, setFormData] = useState({ name: '', organization: '', country: '', platform: '' });
+// Mock function to simulate backend hash generation
+const generateMockHash = async (url: string) => {
+  await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
+  const timestamp = new Date().toUTCString();
+  const hash = `0x${[...Array(64)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
+  return { url, timestamp, hash };
+};
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
+export default function AdvocacyReport() {
+  const [url, setUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [captureData, setCaptureData] = useState<{ url: string; timestamp: string; hash: string } | null>(null);
+  const evidenceCardRef = useRef<HTMLDivElement>(null);
+
+  const handleCapture = async () => {
+    if (!url) {
+      toast.error('Please enter a URL to capture.');
+      return;
+    }
+
+    setIsLoading(true);
+    setCaptureData(null);
+    toast.loading('Generating digital proof... Please wait.');
+
+    try {
+      const { url: capturedUrl, timestamp, hash } = await generateMockHash(url);
+      setCaptureData({ url: capturedUrl, timestamp, hash });
+      toast.success('Digital proof generated successfully!');
+    } catch (error) {
+      toast.error('Failed to generate proof. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.country) {
-        toast.error('Please fill in at least your name and country of focus.');
+  const handleDownload = () => {
+    if (!evidenceCardRef.current) {
+        toast.error('Evidence card component not found.');
         return;
     }
-    
-    toast.success('Generating your report... This is a demo feature.');
-    // In a real app, this would trigger a PDF generation service.
-    console.log('Form submitted:', formData);
+
+    toast.loading('Preparing download...');
+
+    toPng(evidenceCardRef.current, { cacheBust: true, quality: 1.0 })
+      .then((dataUrl) => {
+        const link = document.createElement('a');
+        link.download = `rights-radar-proof-${new Date().toISOString()}.png`;
+        link.href = dataUrl;
+        link.click();
+        toast.success('Download started!');
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error('Failed to create image for download.');
+      });
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white">Advocacy Report Generator</h1>
-          <p className="mt-2 text-lg text-gray-400">Create a tailored briefing note for your advocacy efforts.</p>
-        </div>
-
-        <Card className="max-w-2xl mx-auto bg-gray-800 border-gray-700">
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8 text-center">Advocacy Report Generator</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-white">Generate Your Briefing Note</CardTitle>
-            <CardDescription>Fill in the details below to create a PDF summary.</CardDescription>
+            <CardTitle>Capture Digital Evidence</CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className='text-white'>Your Name</Label>
-                  <Input id="name" placeholder="e.g., Imani Adebayo" value={formData.name} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="organization" className='text-white'>Your Organization (Optional)</Label>
-                  <Input id="organization" placeholder="e.g., Digital Rights Africa" value={formData.organization} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="country" className='text-white'>Country of Focus</Label>
-                <Input id="country" placeholder="e.g., Nigeria" value={formData.country} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="platform" className='text-white'>Specific Platform of Concern (Optional)</Label>
-                <Input id="platform" placeholder="e.g., Meta" value={formData.platform} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white" />
-              </div>
-              <Button type="submit" className="w-full bg-[#FF69B4] text-white hover:bg-[#E05A9A]">
-                Generate PDF
-              </Button>
-            </form>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-slate-600">
+              Enter a URL to generate a timestamped, verifiable proof of its content at a specific moment.
+            </p>
+            <div className="space-y-2">
+              <Label htmlFor="url">URL to Capture</Label>
+              <Input
+                id="url"
+                type="url"
+                placeholder="https://example.com/article"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+            <Button onClick={handleCapture} disabled={isLoading} className="w-full bg-purple-600 hover:bg-purple-700">
+              {isLoading ? 'Capturing...' : 'Capture Content'}
+            </Button>
           </CardContent>
         </Card>
+
+        <div className="space-y-6">
+          <Card className="bg-slate-50">
+            <CardHeader>
+              <CardTitle>Digital Notary Proof</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading && (
+                <div className="flex items-center justify-center h-48">
+                    <p className="text-slate-500">Generating verifiable evidence...</p>
+                </div>
+              )}
+              {captureData && (
+                <div className="space-y-4">
+                  <div ref={evidenceCardRef}>
+                    <EvidenceCard 
+                        url={captureData.url}
+                        timestampUTC={captureData.timestamp}
+                        contentHash={captureData.hash}
+                        logoUrl='https://storage.googleapis.com/dala-prod-public-storage/generated-images/326700c1-cffe-44cf-aadf-9b1235bab97b/rightsradarlogo-z3zq6q9-1764337073678.webp'
+                    />
+                  </div>
+                  <Button onClick={handleDownload} className="w-full bg-orange-500 hover:bg-orange-600">
+                    Download Proof as PNG
+                  </Button>
+                </div>
+              )}
+              {!isLoading && !captureData && (
+                <div className="flex items-center justify-center h-48">
+                  <p className="text-center text-slate-500">Your generated proof will appear here.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
-};
-
-export default AdvocacyReportPage;
+}
