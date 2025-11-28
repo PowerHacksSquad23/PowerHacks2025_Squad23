@@ -1,8 +1,17 @@
-import { platformSafetyData } from '@/data/mockData';
+import { useQuery } from '@tanstack/react-query';
+import { ArrowUp, ArrowDown, Minus, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
+import { fetchPlatformSafety } from '@/lib/api';
+import type { PlatformSafetyEntry } from '@/types/data';
 
 const PlatformSafetyPage = () => {
+  const { data, isLoading, isError, error } = useQuery<PlatformSafetyEntry[]>({
+    queryKey: ['platform-safety'],
+    queryFn: fetchPlatformSafety
+  });
+
   return (
     <div className="bg-gray-900 min-h-screen text-white">
       <div className="container mx-auto px-4 py-12">
@@ -16,35 +25,55 @@ const PlatformSafetyPage = () => {
             <CardTitle className="text-white">Leaderboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="p-4">Rank</th>
-                    <th className="p-4">Platform</th>
-                    <th className="p-4 text-center">Safety Score</th>
-                    <th className="p-4 text-center">Change</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {platformSafetyData.map((item) => (
-                    <tr key={item.rank} className="border-b border-gray-700 last:border-b-0 hover:bg-gray-700/50">
-                      <td className="p-4 font-bold text-2xl text-[#FF69B4]">{item.rank}</td>
-                      <td className="p-4 text-lg font-medium">{item.platform}</td>
-                      <td className="p-4 text-center text-xl font-semibold">{item.score}</td>
-                      <td className="p-4 flex items-center justify-center">
-                        <span className={`flex items-center font-bold ${item.change.startsWith('+') ? 'text-green-400' : item.change.startsWith('-') ? 'text-red-400' : 'text-gray-400'}`}>
-                          {item.change.startsWith('+') && <ArrowUp className="h-5 w-5 mr-1" />}
-                          {item.change.startsWith('-') && <ArrowDown className="h-5 w-5 mr-1" />}
-                          {!item.change.startsWith('+') && !item.change.startsWith('-') && <Minus className="h-5 w-5 mr-1" />}
-                          {item.change.substring(1)}
-                        </span>
-                      </td>
+            {isLoading && <Skeleton className="h-48 w-full bg-gray-700" />}
+
+            {isError && (
+              <Alert className="bg-gray-900 border border-red-500/50 text-white">
+                <AlertTriangle className="text-red-400" />
+                <AlertTitle>Unable to load data</AlertTitle>
+                <AlertDescription>{error instanceof Error ? error.message : 'Please try again later.'}</AlertDescription>
+              </Alert>
+            )}
+
+            {data && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-gray-700">
+                      <th className="p-4">Rank</th>
+                      <th className="p-4">Platform</th>
+                      <th className="p-4 text-center">Safety Score</th>
+                      <th className="p-4 text-center">Change</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {data.map((item) => (
+                      <tr key={item.rank} className="border-b border-gray-700 last:border-b-0 hover:bg-gray-700/50">
+                        <td className="p-4 font-bold text-2xl text-[#FF69B4]">{item.rank}</td>
+                        <td className="p-4 text-lg font-medium">{item.platform}</td>
+                        <td className="p-4 text-center text-xl font-semibold">{item.score}</td>
+                        <td className="p-4 flex items-center justify-center">
+                          <span
+                            className={`flex items-center font-bold ${
+                              item.change.startsWith('+')
+                                ? 'text-green-400'
+                                : item.change.startsWith('-')
+                                  ? 'text-red-400'
+                                  : 'text-gray-400'
+                            }`}
+                          >
+                            {item.change.startsWith('+') && <ArrowUp className="h-5 w-5 mr-1" />}
+                            {item.change.startsWith('-') && <ArrowDown className="h-5 w-5 mr-1" />}
+                            {!item.change.startsWith('+') && !item.change.startsWith('-') && <Minus className="h-5 w-5 mr-1" />}
+                            {item.change.substring(1)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

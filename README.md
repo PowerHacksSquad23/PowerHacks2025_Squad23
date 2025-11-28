@@ -49,32 +49,87 @@ We take data protection seriously, especially given the sensitive nature of GBV 
 
 ## ⚙️ Installation & Setup (Run Locally)
 
-Follow these steps to get RightsRadar running on your machine.
+We now ship a lightweight Node/Express backend that proxies Supabase and keeps the frontend truly data-driven.
 
-**Prerequisites:** Node.js (v18+) and npm.
+**Prerequisites:** Node.js (v18+), npm, and a Supabase project (free tier works).
 
-1.  **Clone the repository**
-    ```bash
-    git clone [https://github.com/](https://github.com/)[your-username]/rights-radar.git
-    cd rights-radar
-    ```
+### 1. Clone & install
 
-2.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
+```bash
+git clone <repo-url>
+cd PowerHacks2025_Squad23
+```
 
-3.  **Set up Environment Variables**
-    Create a `.env` file in the root directory and add your Supabase keys:
-    ```env
-    VITE_SUPABASE_URL=your_supabase_url
-    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-    ```
+```bash
+cd backend
+npm install
+cp .env.example .env
+```
 
-4.  **Run the App**
-    ```bash
-    npm run dev
-    ```
+Fill in `.env` with your Supabase instance:
+
+```
+PORT=4000
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_ANON_KEY=your-anon-key
+```
+
+Then run the API:
+
+```bash
+npm run dev
+```
+
+In a second terminal, install and start the Vite frontend:
+
+```bash
+cd Frontend
+npm install
+cp .env.example .env # sets VITE_API_BASE_URL=http://localhost:4000/api
+npm run dev
+```
+
+Visit `http://localhost:3000` and you should see live data fetched from Supabase via the backend.
+
+### 2. Supabase schema (copy/paste into SQL Editor)
+
+```sql
+create table public.legal_gap_countries (
+  id text primary key,
+  name text not null,
+  status text not null,
+  details text
+);
+
+create table public.platform_safety_index (
+  id bigserial primary key,
+  rank int not null,
+  platform text not null,
+  score int not null,
+  change text not null
+);
+
+create table public.timeline_events (
+  id bigserial primary key,
+  year text not null,
+  event text not null,
+  description text not null
+);
+
+alter table public.legal_gap_countries enable row level security;
+alter table public.platform_safety_index enable row level security;
+alter table public.timeline_events enable row level security;
+
+create policy "Public read legal gaps"
+  on public.legal_gap_countries for select using (true);
+create policy "Public read platform index"
+  on public.platform_safety_index for select using (true);
+create policy "Public read timeline"
+  on public.timeline_events for select using (true);
+```
+
+Seed the tables with the values found in `backend/src/data/fallback.ts` (those are also used when Supabase credentials are missing, so the UI never breaks during local development).
 
 ---
 
