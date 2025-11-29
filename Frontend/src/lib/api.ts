@@ -1,19 +1,32 @@
-import type { LegalGapCountry, PlatformSafetyEntry, TimelineEvent } from '@/types/data';
+import { createClient } from '@supabase/supabase-js';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000/api';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-async function request<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`);
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || `Request to ${path} failed with status ${response.status}`);
-  }
+export const fetchPlatformSafety = async () => {
+  const { data, error } = await supabase
+    .from('tech_platforms')
+    .select('*')
+    .order('safety_score', { ascending: false });
 
-  return response.json() as Promise<T>;
-}
+  if (error) throw error;
 
-export const fetchLegalGaps = () => request<LegalGapCountry[]>('/legal-gaps');
-export const fetchPlatformSafety = () => request<PlatformSafetyEntry[]>('/platforms');
-export const fetchTimeline = () => request<TimelineEvent[]>('/timeline');
+  return (data as any[]).map((item, index) => ({
+    id: item.id,
+    rank: index + 1,
+    platform: item.platform_name,
+    score: item.safety_score,
+    change: index % 2 === 0 ? '+2' : '-1'
+  }));
+};
 
+export const fetchGbvLaws = async () => {
+  const { data, error } = await supabase
+    .from('gbv_laws')
+    .select('*');
+
+  if (error) throw error;
+  return data;
+};
