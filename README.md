@@ -61,21 +61,25 @@ If you wish to run the code locally:
 ```bash
 git clone [https://github.com/PowerHacksSquad23/PowerHacks2025_Squad23.git](https://github.com/PowerHacksSquad23/PowerHacks2025_Squad23.git)
 cd PowerHacks2025_Squad23
+```
 
 ### 2. Install Dependencies
 ```bash
 cd Frontend
 npm install
+```
 
 ### 3. Set up Environment Variables
 Create a `.env` file in the Frontend directory and add your Supabase keys:
 ```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
 ### 4. Run the App
 ```bash
 npm run dev
+```
 
 ## 🗄️ Database Schema (Supabase)
 We use a relational schema with strict RLS policies.
@@ -106,6 +110,7 @@ create table gbv_timeline (
 alter table gbv_laws enable row level security;
 alter table tech_platforms enable row level security;
 alter table gbv_timeline enable row level security;
+```
 
 ## 👥 The Team (Squad 23)
 Built with ❤️ for PowerHacks 2025: 21 Days of Activism against GBV.
