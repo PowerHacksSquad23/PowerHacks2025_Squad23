@@ -4,7 +4,7 @@ import { AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { fetchLegalGaps } from '@/lib/api';
+import { fetchGbvLaws } from '@/lib/api';
 import type { LegalGapCountry } from '@/types/data';
 
 const staticMapUrl = 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/326700c1-cffe-44cf-aadf-9b1235bab97b/legal-gap-map-static-h8hhj02-1764327967647.webp';
@@ -19,7 +19,7 @@ const statusColors: { [key: string]: string } = {
 const LegalGapMapPage = () => {
   const { data, isLoading, isError, error } = useQuery<LegalGapCountry[]>({
     queryKey: ['legal-gaps'],
-    queryFn: fetchLegalGaps
+    queryFn: fetchGbvLaws,
   });
 
   const statusCounts = useMemo(() => {
