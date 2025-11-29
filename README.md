@@ -1,156 +1,118 @@
-# 🌍 RightsRadar: The Gender Safety Edition
+# 🛡️ RightsRadar: The Gender Safety Observatory
 
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Status: MVP](https://img.shields.io/badge/Status-MVP-success)
-![Focus: GBV](https://img.shields.io/badge/Theme-Gender_Based_Violence-purple)
+> **"Turning Digital Evidence into Policy Action."**
 
-> **"Tracking the laws that protect women in the digital age."**
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?logo=vercel)](https://rights-radar.vercel.app)
+![Status](https://img.shields.io/badge/Status-Live_MVP-success)
+![Focus](https://img.shields.io/badge/Theme-Policy_Advocacy-purple)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-RightsRadar is a global policy observatory dashboard built to honor the **21 Days of GBV Activism**. It visualizes the "Safety Gap" in digital laws worldwide, holding nations and big tech accountable for online violence against women.
-
----
-
-## 📸 Demo & Screenshots
-
-![Project Demo GIF](placeholder-link-to-gif.gif)
+**🔴 Live Demo:** [https://rights-radar.vercel.app](https://rights-radar.vercel.app)
 
 ---
 
-## 🚀 Key Features (Innovation & Creativity)
+## 💡 The Problem
+In the fight against Online Gender-Based Violence (OGBV), activists and policymakers face three critical barriers:
+1.  **Invisible Gaps:** It is difficult to visualize which nations lack specific laws for "Revenge Porn" or "Cyber-stalking."
+2.  **Ephemeral Evidence:** Online harassment is often deleted before victims can prove it, making legal action impossible.
+3.  **Bureaucratic Friction:** Reporting violations to the UN or ODPC requires complex legal formatting that most citizens cannot navigate.
 
-Most dashboards just *show* data. RightsRadar *acts* on it.
+## 🚀 Our Solution: RightsRadar
+RightsRadar is a **Policy Advocacy Toolkit** that empowers activists to hold governments and tech giants accountable using data, not just anecdotes.
 
-* **🌍 The "Safety Gap" 3D Map:** An interactive WebGL globe that highlights countries lacking "Revenge Porn" and "Cyber-Stalking" laws in real-time.
-* **📄 The "Geneva Generator" (Innovation):** A one-click tool that auto-generates a formal UN Human Rights complaint PDF for activists, bridging the gap between data and diplomacy.
-* **🏢 Big Tech Accountability Index:** A dynamic leaderboard ranking platforms (X, Meta, TikTok) on their "Safety by Design" responsiveness to female users.
-
----
-
-## 🛠️ Technical Stack (Performance)
-
-We prioritized a lightweight, high-performance architecture.
-
-* **Frontend:** React (Vite) + Tailwind CSS (Optimized for <1s load times).
-* **Visualization:** `react-globe.gl` for 3D rendering and `Recharts` for data visualization.
-* **Backend:** Supabase (PostgreSQL) for real-time data fetching.
-* **Security:** Row Level Security (RLS) enabled on all database tables.
+### 🌟 Key Features (Innovation)
+* **🌍 Legal Gap Map:** An interactive 3D visualization highlighting countries with missing digital safety laws.
+* **📸 Digital Notary (Forensic Tool):** A secure tool that captures URLs, timestamps them, and generates a **cryptographic hash (SHA-256)** to preserve admissible evidence of online violence before it is deleted.
+* **📄 The Geneva Generator:** An automated advocacy engine that turns dashboard data into a formal **UN Human Rights Complaint PDF** in one click.
+* **📉 Big Tech Accountability Index:** A leaderboard ranking social media platforms on their responsiveness to safety reports.
 
 ---
 
-## 🛡️ Security & Fault Tolerance
+## 📸 System Architecture
 
-We take data protection seriously, especially given the sensitive nature of GBV advocacy.
+RightsRadar utilizes a modern **Serverless Architecture** to ensure high performance and security without the overhead of managing traditional servers.
 
-1.  **Row Level Security (RLS):** Our Supabase database uses strict RLS policies. Anonymous users can *read* global stats, but only authenticated admin accounts can *write* or *modify* policy data.
-2.  **Environment Variables:** All API keys are stored in `.env` files and never committed to version control.
-3.  **Error Boundaries:** The application is wrapped in React Error Boundaries to prevent white-screen crashes if the 3D map fails to load on older devices.
+* **Frontend:** React (Vite) + Tailwind CSS (Mobile-First Design).
+* **Backend:** Supabase (PostgreSQL) for real-time data storage and Authentication.
+* **Security:** Row Level Security (RLS) policies enabled to protect dataset integrity.
+* **Performance:** Implemented **Lazy Loading** & `React.Suspense` to achieve <1s initial load time.
+
+---
+
+## 🛠️ Technical Stack
+
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| **Frontend** | React, TypeScript, Vite | Core application logic and UI |
+| **Styling** | Tailwind CSS, Lucide React | Responsive design and iconography |
+| **Database** | Supabase (PostgreSQL) | Relational data and Row Level Security |
+| **Visualization** | Recharts | Data charts for the Tech Index |
+| **PDF Generation** | jsPDF | Generating the UN Complaint documents |
+| **Forensics** | html-to-image | Creating verifiable snapshots of evidence |
+| **Deployment** | Vercel | Global CDN hosting |
 
 ---
 
 ## ⚙️ Installation & Setup (Run Locally)
 
-We now ship a lightweight Node/Express backend that proxies Supabase and keeps the frontend truly data-driven.
+If you wish to run the code locally:
 
-**Prerequisites:** Node.js (v18+), npm, and a Supabase project (free tier works).
-
-### 1. Clone & install
-
+### 1. Clone the repository
 ```bash
-git clone <repo-url>
+git clone [https://github.com/PowerHacksSquad23/PowerHacks2025_Squad23.git](https://github.com/PowerHacksSquad23/PowerHacks2025_Squad23.git)
 cd PowerHacks2025_Squad23
-```
 
-```bash
-cd backend
-npm install
-cp .env.example .env
-```
-
-Fill in `.env` with your Supabase instance:
-
-```
-PORT=4000
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-SUPABASE_ANON_KEY=your-anon-key
-```
-
-Then run the API:
-
-```bash
-npm run dev
-```
-
-In a second terminal, install and start the Vite frontend:
-
+### 2. Install Dependencies
 ```bash
 cd Frontend
 npm install
-cp .env.example .env # sets VITE_API_BASE_URL=http://localhost:4000/api
+
+### 3. Set up Environment Variables
+Create a `.env` file in the Frontend directory and add your Supabase keys:
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+### 4. Run the App
+```bash
 npm run dev
-```
 
-Visit `http://localhost:3000` and you should see live data fetched from Supabase via the backend.
-
-### 2. Supabase schema (copy/paste into SQL Editor)
+## 🗄️ Database Schema (Supabase)
+We use a relational schema with strict RLS policies.
 
 ```sql
-create table public.legal_gap_countries (
-  id text primary key,
-  name text not null,
-  status text not null,
-  details text
+create table gbv_laws (
+  id bigint generated by default as identity primary key,
+  country_name text not null,
+  has_revenge_porn_law boolean default false,
+  has_cyberstalking_law boolean default false,
+  internet_freedom_score int default 50
 );
 
-create table public.platform_safety_index (
-  id bigserial primary key,
-  rank int not null,
-  platform text not null,
-  score int not null,
-  change text not null
+create table tech_platforms (
+  id bigint generated by default as identity primary key,
+  platform_name text not null,
+  safety_score int default 0,
+  avg_response_time_hours int default 48
 );
 
-create table public.timeline_events (
-  id bigserial primary key,
+create table gbv_timeline (
+  id bigint generated by default as identity primary key,
   year text not null,
   event text not null,
   description text not null
 );
 
-alter table public.legal_gap_countries enable row level security;
-alter table public.platform_safety_index enable row level security;
-alter table public.timeline_events enable row level security;
+alter table gbv_laws enable row level security;
+alter table tech_platforms enable row level security;
+alter table gbv_timeline enable row level security;
 
-create policy "Public read legal gaps"
-  on public.legal_gap_countries for select using (true);
-create policy "Public read platform index"
-  on public.platform_safety_index for select using (true);
-create policy "Public read timeline"
-  on public.timeline_events for select using (true);
-```
+## 👥 The Team (Squad 23)
+Built with ❤️ for PowerHacks 2025: 21 Days of Activism against GBV.
 
-Seed the tables with the values found in `backend/src/data/fallback.ts` (those are also used when Supabase credentials are missing, so the UI never breaks during local development).
-
----
-
-## 👥 The Team (Development Process)
-
-We used **Agile Methodology** with a Kanban board to track our sprint during the hackathon.
-
-* **[Name 1]** - *Frontend Lead* (UI/UX & 3D Map integration)
-* **[Name 2]** - *Backend Architect* (Supabase Schema & Security Policies)
-* **[Name 3]** - *Research & Content* (UNCTAD Data & PDF Generator Logic)
-* **[Name 4]** - *Project Manager* (Documentation & Testing)
-
----
-
-## 📊 Performance Metrics
-
-* **Lighthouse Score:** 95+ (Performance)
-* **Accessibility:** 100% (Tested for screen readers)
-
----
-
-## 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
+| Role | Name | Contribution |
+| :--- | :--- | :--- |
+| **Lead Developer** | Lilian Vivian | Full-stack Architecture, Vercel Deployment, Auth Integration |
+| **Backend Strategy** | [Teammate Name] | Database Schema Design, SQL Logic |
+| **Research & Policy** | [Teammate Name] | Legal Research, "Geneva Generator" Content |
+| **Design & UI** | [Teammate Name] | UX/UI flow, Accessibility Testing |
