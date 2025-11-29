@@ -120,4 +120,4 @@ Built with ❤️ for PowerHacks 2025: 21 Days of Activism against GBV.
 | **Lead Developer** | Lilian Vivian | Full-stack Architecture, Vercel Deployment, Auth Integration |
 | **Backend Strategy** | [Teammate Name] | Database Schema Design, SQL Logic |
 | **Research & Policy** | [Teammate Name] | Legal Research, "Geneva Generator" Content |
-| **Design & UI** | [Teammate Name] | UX/UI flow, Accessibility Testing |
+| **Design & UI** | Bessy Wangui | UX/UI flow, Accessibility Testing |
